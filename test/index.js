@@ -3,20 +3,40 @@
  */
 
 import test from 'tape'
-import random from '../src'
+import random, { RANDOM } from '../src'
 
 /**
  * Tests
  */
 
-test('should work', ({equal, end}) => {
-  const mw = random(rfc1149)({})(() => {})
+test(`should resolve number when using custom random function`, ({equal, end}) => {
+  const next = (action) => action
+  const mw = random(() => 4)()(next)
 
-  equal(mw({type: 'RANDOM'}), 4)
+  mw({ type: RANDOM }).then((value) => {
+    equal(value, 4)
+  })
+
   end()
 })
 
-function rfc1149 () {
-  // Chosen by fair dice roll
-  return 4
-}
+test(`should resolve number when using default random function`, ({equal, end}) => {
+  const next = (action) => action
+  const mw = random()()(next)
+
+  mw({ type: RANDOM }).then((value) => {
+    equal(typeof value, 'number')
+  })
+
+  end()
+})
+
+
+test('should return next action when action type is ANY', ({equal, end}) => {
+  const next = (action) => action
+  const mw = random()()(next)
+
+  equal(mw({ type: 'ANY' }).type, 'ANY')
+
+  end()
+})
