@@ -8,29 +8,18 @@ const RANDOM = 'EFFECT_RANDOM'
  * Random number generator
  */
 
-function random (rng=Math.random.bind(Math)) {
-  return () => next => effect =>
-    effect.type === RANDOM
+function randomMiddleware (rng = () => Math.random()) {
+  return () => next => action =>
+    action.type === RANDOM
       ? Promise.resolve(rng())
-      : next(effect)
+      : next(action)
 }
-
-/**
- * Action creator
- */
-
- function random () {
-   return {
-     type: RANDOM
-   }
- }
-
 
 /**
  * Exports
  */
 
-export default random
+export default randomMiddleware
 export {
-  random
+  RANDOM
 }
